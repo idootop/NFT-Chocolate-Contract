@@ -11,7 +11,7 @@
     "deploy:mainnet": "export PROD=true && hardhat run --network mainnet scripts/deploy.ts",
     "deploy:ropsten": "export PROD=true && hardhat run --network ropsten scripts/deploy.ts",
     "deploy:rinkeby": "export PROD=true && hardhat run --network rinkeby scripts/deploy.ts",
-    "test": "hardhat test",
+    "test": "TS_NODE_TRANSPILE_ONLY=1 hardhat test",
     "coverage": "hardhat coverage"
   },
   "lint-staged": {
