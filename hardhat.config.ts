@@ -26,6 +26,10 @@ const privateKey: string | undefined = process.env.PRIVATE_KEY;
 if (!privateKey) {
   throw new Error("Please set your PRIVATE_KEY in a .env file");
 }
+const privateKeyProd: string | undefined = process.env.PRIVATE_KEY_PROD;
+if (!privateKeyProd) {
+  throw new Error("Please set your PRIVATE_KEY_PROD in a .env file");
+}
 
 // HD 钱包助记词
 const mnemonic: string | undefined = process.env.MNEMONIC;
@@ -48,7 +52,7 @@ const chainIds = {
 };
 
 const hdAccounts = {
-  count: 1,
+  count: 10,
   mnemonic,
   path: "m/44'/60'/0'/0",
 };
@@ -57,7 +61,7 @@ const getChainConfig = (chain: keyof typeof chainIds) => {
   return {
     chainId: chainIds[chain],
     url: `https://eth-${chain}.alchemyapi.io/v2/${alchemy}`,
-    accounts: chain === "mainnet" ? [privateKey] : hdAccounts,
+    accounts: chain === "mainnet" ? [privateKeyProd] : [privateKey],
   };
 };
 

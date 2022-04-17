@@ -2,10 +2,14 @@
   "name": "learn2dapp",
   "description": "Learn Solidity smart contracts",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "prepare": "husky install",
     "clean": "ts-node scripts/clean.ts",
-    "start": "ts-node scripts/node.ts",
+    "node": "ts-node scripts/node.ts",
+    "build": "yarn clean && hardhat compile",
     "accounts": "hardhat --network hardhat accounts",
     "deploy": "hardhat run --network hardhat scripts/deploy.ts",
     "deploy:mainnet": "export PROD=true && hardhat run --network mainnet scripts/deploy.ts",
@@ -23,6 +27,7 @@
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@openzeppelin/contracts": "^4.5.0",
     "@typechain/ethers-v5": "^7.2.0",
     "@typechain/hardhat": "^2.3.1",
     "@types/chai": "^4.3.0",
