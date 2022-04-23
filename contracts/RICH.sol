@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
 struct NFTMetadata {
+    string name;
     string desp;
     string image;
 }
@@ -33,8 +34,8 @@ abstract contract ERC721MetadataStorage is ERC721 {
             bytes(
                 string(
                     abi.encodePacked(
-                        '{ "name": "IU chocolate #',
-                        Strings.toString(tokenId),
+                        '{ "name": ',
+                        metadata.name,
                         '", "description": "',
                         metadata.desp,
                         '", "image": "',
@@ -64,40 +65,54 @@ abstract contract ERC721MetadataStorage is ERC721 {
     }
 }
 
-contract IUChocolate is ERC721, ERC721Enumerable, ERC721MetadataStorage {
+contract RICH is ERC721, ERC721Enumerable, ERC721MetadataStorage {
     address private owner;
+    uint256 public pendingWithdrawal;
 
-    constructor() ERC721("IU Chocolate", "IU") {
+    constructor() ERC721("Pretend I'M RICH", "RICH") {
         owner = msg.sender;
     }
 
+    event WithdrawSuccess();
     event MintSuccess(uint256 tokenId);
     event UpdateSuccess();
 
+    error InadequateBids(uint256 amount);
     error NotTheOwner();
-    error OnlyOne();
+
+    function withdraw() public {
+        uint256 amount = pendingWithdrawal;
+        pendingWithdrawal = 0;
+        payable(owner).transfer(amount);
+        emit WithdrawSuccess();
+    }
 
     function mint(
         address to,
+        string memory name,
         string memory desp,
         string memory image
-    ) public {
+    ) public payable {
+        uint256 amount = msg.value;
         address target = to == address(0) ? msg.sender : to;
-        if (msg.sender != owner && balanceOf(target) != 0) revert OnlyOne();
+        if (msg.sender != owner && amount < 1 ether)
+            revert InadequateBids(amount);
         uint256 tokenId = totalSupply();
+        pendingWithdrawal += msg.value;
         _safeMint(target, tokenId);
-        _setTokenMetadata(tokenId, NFTMetadata(desp, image));
+        _setTokenMetadata(tokenId, NFTMetadata(name, desp, image));
         emit MintSuccess(tokenId);
     }
 
     function update(
         uint256 tokenId,
+        string memory name,
         string memory desp,
         string memory image
     ) public {
         address sender = msg.sender;
         if (sender != ownerOf(tokenId)) revert NotTheOwner();
-        _setTokenMetadata(tokenId, NFTMetadata(desp, image));
+        _setTokenMetadata(tokenId, NFTMetadata(name, desp, image));
         emit UpdateSuccess();
     }
 

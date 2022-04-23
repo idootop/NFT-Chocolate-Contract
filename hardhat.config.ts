@@ -18,9 +18,6 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-// 正式环境
-const isProd = process.env.PROD !== undefined;
-
 // PRIVATE_KEY
 const privateKey: string | undefined = process.env.PRIVATE_KEY;
 if (!privateKey) {
@@ -31,22 +28,23 @@ if (!privateKeyProd) {
   throw new Error("Please set your PRIVATE_KEY_PROD in a .env file");
 }
 
-// HD 钱包助记词
+// HD Wallet mnemonic
 const mnemonic: string | undefined = process.env.MNEMONIC;
 if (!mnemonic) {
   throw new Error("Please set your MNEMONIC in a .env file");
 }
 
 // alchemy api key
-const alchemy: string | undefined = process.env.ALCHEMY_API_KEY;
+const alchemy: string | undefined = process.env.ALCHEMY_ETH_API_KEY;
 if (!alchemy) {
-  throw new Error("Please set your ALCHEMY_API_KEY in a .env file");
+  throw new Error("Please set your ALCHEMY_ETH_API_KEY in a .env file");
 }
 
 const chainIds = {
-  // Ethereum 主网
+  // mainnet
   mainnet: 1,
-  // 测试网
+  polygon: 137,
+  // testnet
   ropsten: 3,
   rinkeby: 4,
 };
@@ -58,11 +56,17 @@ const hdAccounts = {
 };
 
 const getChainConfig = (chain: keyof typeof chainIds) => {
-  return {
-    chainId: chainIds[chain],
-    url: `https://eth-${chain}.alchemyapi.io/v2/${alchemy}`,
-    accounts: chain === "mainnet" ? [privateKeyProd] : [privateKey],
-  };
+  return chain === "polygon"
+    ? {
+        chainId: chainIds[chain],
+        url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_POLYGON_API_KEY}`,
+        accounts: [privateKeyProd],
+      }
+    : {
+        chainId: chainIds[chain],
+        url: `https://eth-${chain}.alchemyapi.io/v2/${alchemy}`,
+        accounts: chain === "mainnet" ? [privateKeyProd] : [privateKey],
+      };
 };
 
 // You need to export an object to set up your config
@@ -77,6 +81,7 @@ const config: HardhatUserConfig = {
       },
     },
     mainnet: getChainConfig("mainnet"),
+    polygon: getChainConfig("polygon"),
     ropsten: getChainConfig("ropsten"),
     rinkeby: getChainConfig("rinkeby"),
   },
@@ -101,7 +106,7 @@ const config: HardhatUserConfig = {
     version: "0.8.9",
     settings: {
       optimizer: {
-        enabled: isProd,
+        enabled: true,
         runs: 800,
       },
     },
