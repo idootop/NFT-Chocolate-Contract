@@ -8,10 +8,11 @@
   "scripts": {
     "prepare": "husky install",
     "clean": "ts-node scripts/base/clean.ts",
-    "node": "ts-node scripts/node.ts",
+    "start": "ts-node scripts/base/node.ts",
     "build": "yarn clean && hardhat compile",
     "accounts": "hardhat --network hardhat accounts",
     "deploy": "hardhat run --network hardhat scripts/IU/deploy.ts",
+    "deploy:ganache": "hardhat run --network ganache scripts/IU/deploy.ts",
     "deploy:mainnet": "hardhat run --network mainnet scripts/IU/deploy.ts",
     "deploy:polygon": "hardhat run --network polygon scripts/IU/deploy.ts",
     "deploy:ropsten": "hardhat run --network ropsten scripts/IU/deploy.ts",

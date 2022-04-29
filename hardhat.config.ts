@@ -47,6 +47,7 @@ const chainIds = {
   // testnet
   ropsten: 3,
   rinkeby: 4,
+  ganache: 1337,
 };
 
 const hdAccounts = {
@@ -56,7 +57,17 @@ const hdAccounts = {
 };
 
 const getChainConfig = (chain: keyof typeof chainIds) => {
-  return chain === "polygon"
+  return chain === "ganache"
+    ? {
+        chainId: chainIds[chain],
+        url: "HTTP://127.0.0.1:7545",
+        accounts: [
+          "0x40d426086e45595aaa3032bb9659f6fbd0e73a074dd2c8d63af3e8e4388bfdfe",
+          "0x92044429edfc6f8578a1cec5682b35ee5ef7c98f86652dfb85075ddb0caccfec",
+          "0x92044429edfc6f8578a1cec5682b35ee5ef7c98f86652dfb85075ddb0caccfec",
+        ],
+      }
+    : chain === "polygon"
     ? {
         chainId: chainIds[chain],
         url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_POLYGON_API_KEY}`,
@@ -80,6 +91,7 @@ const config: HardhatUserConfig = {
         blockNumber: 11095000,
       },
     },
+    ganache: getChainConfig("ganache"),
     mainnet: getChainConfig("mainnet"),
     polygon: getChainConfig("polygon"),
     ropsten: getChainConfig("ropsten"),
