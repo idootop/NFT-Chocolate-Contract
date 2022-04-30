@@ -34,7 +34,7 @@ abstract contract ERC721MetadataStorage is ERC721 {
             bytes(
                 string(
                     abi.encodePacked(
-                        '{ "name": ',
+                        '{ "name": "',
                         metadata.name,
                         '", "description": "',
                         metadata.desp,
