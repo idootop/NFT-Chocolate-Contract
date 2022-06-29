@@ -85,9 +85,9 @@ contract DecentralizedLand is ERC721, ERC721Enumerable, ERC721MetadataStorage {
         string memory desp,
         string memory image
     ) public {
-        address target = to == address(0) ? msg.sender : to;
-        if (msg.sender != owner && balanceOf(target) != 0) revert OnlyOne();
+        require(msg.sender == owner, "Excuse me?");
         uint256 tokenId = totalSupply();
+        address target = to == address(0) ? msg.sender : to;
         _safeMint(target, tokenId);
         _setTokenMetadata(tokenId, NFTMetadata(desp, image));
         emit MintSuccess(tokenId);

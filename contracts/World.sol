@@ -93,9 +93,9 @@ contract DecentralizedWorld is ERC721, ERC721Enumerable, WorldMetadataStorage {
         string memory desp,
         string memory image
     ) public {
-        address target = to == address(0) ? msg.sender : to;
-        if (msg.sender != owner && balanceOf(target) != 0) revert OnlyOne();
+        require(msg.sender == owner, "Excuse me?");
         uint256 tokenId = totalSupply();
+        address target = to == address(0) ? msg.sender : to;
         _safeMint(target, tokenId);
         _setTokenMetadata(tokenId, WorldMetadata(desp, image, address(0)));
         emit MintSuccess(tokenId);
