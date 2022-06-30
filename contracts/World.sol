@@ -62,7 +62,7 @@ abstract contract WorldMetadataStorage is ERC721 {
         );
         WorldMetadata memory oldMetadata = _tokenMetadatas[tokenId];
         if (oldMetadata.land == address(0)) {
-            metadata.land = address(new DecentralizedLand(tokenId));
+            metadata.land = address(new DecentralizedLand(msg.sender, tokenId));
         } else {
             metadata.land = oldMetadata.land;
         }

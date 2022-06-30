@@ -3,15 +3,16 @@ import { kZeroAddress } from "../utils/config";
 import { expect } from "chai";
 import { base64, toUtf8String } from "ethers/lib/utils";
 import { ethers } from "hardhat";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 let inited = false;
-let Land: any, land: DecentralizedLand, admin: any;
+let Land: any, land: DecentralizedLand, admin: SignerWithAddress;
 
 beforeEach(async function () {
   if (inited) return;
   [admin] = await ethers.getSigners();
   Land = await ethers.getContractFactory("DecentralizedLand");
-  land = (await Land.deploy(666)) as DecentralizedLand;
+  land = (await Land.deploy(admin.address, 666)) as DecentralizedLand;
   land = land.connect(admin);
   await land.deployed();
   inited = true;

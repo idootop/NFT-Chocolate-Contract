@@ -69,8 +69,8 @@ contract DecentralizedLand is ERC721, ERC721Enumerable, ERC721MetadataStorage {
     address private owner;
     uint256 public landId;
 
-    constructor(uint256 id) ERC721("Decentralized Land", "LAND") {
-        owner = msg.sender;
+    constructor(address from, uint256 id) ERC721("Decentralized Land", "LAND") {
+        owner = from;
         landId = id;
     }
 
