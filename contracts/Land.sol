@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
+import "./World.sol";
+
 struct NFTMetadata {
     string desp;
     string image;
@@ -66,11 +68,15 @@ abstract contract ERC721MetadataStorage is ERC721 {
 }
 
 contract DecentralizedLand is ERC721, ERC721Enumerable, ERC721MetadataStorage {
-    address private owner;
+    address private world;
     uint256 public landId;
 
+    function owner() private view returns (address) {
+        return DecentralizedWorld(world).getOwner();
+    }
+
     constructor(address from, uint256 id) ERC721("Decentralized Land", "LAND") {
-        owner = from;
+        world = from;
         landId = id;
     }
 
@@ -85,7 +91,7 @@ contract DecentralizedLand is ERC721, ERC721Enumerable, ERC721MetadataStorage {
         string memory desp,
         string memory image
     ) public {
-        require(msg.sender == owner, "Excuse me?");
+        require(msg.sender == owner(), "Excuse me?");
         uint256 tokenId = totalSupply();
         address target = to == address(0) ? msg.sender : to;
         _safeMint(target, tokenId);

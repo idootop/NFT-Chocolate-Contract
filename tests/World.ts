@@ -6,11 +6,11 @@ import { base64, toUtf8String } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
 let inited = false;
-let World: any, world: DecentralizedWorld, admin: any;
+let World: any, world: DecentralizedWorld, admin: any, user: any;
 
 beforeEach(async function () {
   if (inited) return;
-  [admin] = await ethers.getSigners();
+  [admin, user] = await ethers.getSigners();
   World = await ethers.getContractFactory("DecentralizedWorld");
   world = (await World.deploy()) as DecentralizedWorld;
   world = world.connect(admin);
@@ -65,6 +65,42 @@ describe("Decentralized World", function () {
     await tx.wait();
     expect(await land.totalSupply()).to.equal(1);
     expect(decode(await land.tokenURI(0))).to.include(
+      "QmXVd7tMEa3oNQsrRncTDQe1V9JftAmuHqtFxUeqH7rukc"
+    );
+  });
+  it("Change admin", async function () {
+    world = world.connect(admin);
+    await world.setOwner(user.address);
+    expect(await world.getOwner()).to.equal(user.address);
+  });
+  it("Only new admin can mint land", async function () {
+    world = world.connect(admin);
+    await world.setOwner(admin.address).catch(() => undefined);
+    expect(await world.getOwner()).to.equal(user.address);
+    const metadata = decode(await world.tokenURI(0));
+    const landAddress = JSON.parse(metadata).land;
+    const Land: any = await ethers.getContractFactory("DecentralizedLand");
+    let land = Land.attach(landAddress) as DecentralizedLand;
+    land = land.connect(admin);
+    expect(await land.totalSupply()).to.equal(1);
+    const tx = await land
+      .mint(
+        kZeroAddress,
+        "李知恩",
+        "ipfs://QmXVd7tMEa3oNQsrRncTDQe1V9JftAmuHqtFxUeqH7rukc"
+      )
+      .catch(() => undefined);
+    await tx?.wait();
+    expect(await land.totalSupply()).to.equal(1);
+    land = land.connect(user);
+    const tx2 = await land.mint(
+      kZeroAddress,
+      "李知恩",
+      "ipfs://QmXVd7tMEa3oNQsrRncTDQe1V9JftAmuHqtFxUeqH7rukc"
+    );
+    await tx2.wait();
+    expect(await land.totalSupply()).to.equal(2);
+    expect(decode(await land.tokenURI(1))).to.include(
       "QmXVd7tMEa3oNQsrRncTDQe1V9JftAmuHqtFxUeqH7rukc"
     );
   });

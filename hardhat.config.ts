@@ -62,9 +62,9 @@ const getChainConfig = (chain: keyof typeof chainIds) => {
         chainId: chainIds[chain],
         url: "HTTP://127.0.0.1:7545",
         accounts: [
-          "0x40d426086e45595aaa3032bb9659f6fbd0e73a074dd2c8d63af3e8e4388bfdfe",
-          "0x92044429edfc6f8578a1cec5682b35ee5ef7c98f86652dfb85075ddb0caccfec",
-          "0x92044429edfc6f8578a1cec5682b35ee5ef7c98f86652dfb85075ddb0caccfec",
+          "0x9a960fe330e4290db608ef8f485099c7a46a21b5c271849f2ba1d9719d1e5499",
+          "0xc88c3bb40ba6aae43901157d23da405a70f2b3f474cbfe2b001fb96369e63e6d",
+          "0x7f8ed62a0de5a5a4c82d0425567ad7058b0e83125ec6b328fb752a886a1410da",
         ],
       }
     : chain === "polygon"

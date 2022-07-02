@@ -62,7 +62,9 @@ abstract contract WorldMetadataStorage is ERC721 {
         );
         WorldMetadata memory oldMetadata = _tokenMetadatas[tokenId];
         if (oldMetadata.land == address(0)) {
-            metadata.land = address(new DecentralizedLand(msg.sender, tokenId));
+            metadata.land = address(
+                new DecentralizedLand(address(this), tokenId)
+            );
         } else {
             metadata.land = oldMetadata.land;
         }
@@ -77,6 +79,15 @@ abstract contract WorldMetadataStorage is ERC721 {
 
 contract DecentralizedWorld is ERC721, ERC721Enumerable, WorldMetadataStorage {
     address private owner;
+
+    function getOwner() public view returns (address) {
+        return owner;
+    }
+
+    function setOwner(address to) public {
+        require(msg.sender == owner, "Excuse me?");
+        owner = to;
+    }
 
     constructor() ERC721("Decentralized World", "WORLD") {
         owner = msg.sender;
